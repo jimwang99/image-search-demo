@@ -6,42 +6,47 @@ This is a demo for image search use LLM to improve its accuracy.
 
 ### Setup
 
-
+> [!IMPORTANT]
+>
+> TODO
 
 ### Run
 
-
+> [!IMPORTANT]
+>
+> TODO
 
 ### Test
 
-
-
+> [!IMPORTANT]
+>
+> TODO
 
 ## Features
 
-* Support add/remove image to/from the database
-* Support image search with natural language queries
-* Support image search by uploading image
+- Support add/remove image to/from the database
+- Support image search with natural language queries
+- Support image search by uploading image
+
+### Non-Goal
+
+- User/admin authentication
 
 
 ## Documents
 
-### Architecture
-
-In [arch.md](./docs/arch.md), I explained the detailed architecture of this demo and some of the choices I've made.
-
-### API
-
-#TODO
-
-
+### [Architecture](./docs/architecture.md)
+### [Implementation](./docs/implementation.md)
+### [Design Choices](./docs/design-choices.md)
+### [Future Work](./docs/future-work.md)
 
 ## TODOs
 
 - [x] Skeleton project
-- [ ] Function diagram
-- [ ] Workflow diagram
-- [ ] Stack and choices
+- [x] High-level diagrams
+- [x] AI stack choices
+- [x] Software stack choices
+- [ ] Detailed diagram
 - [ ] 1st review
 - [ ] Skeleton code with unit-tests
 - [ ] Complete documents
