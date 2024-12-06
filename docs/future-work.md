@@ -1,13 +1,14 @@
-## Future work
+# Future work
 
-### Accuracy
-* Human feedback
-  * Popularity: clicks by users
+## Accuracy
+- Different multimodal models
+- Human feedback
+  - Popularity: clicks by users
+- Reduce duplication
+- Reranking uses tags and other features
 
-
-### Scalability
-* Reduce duplication
-* In-memory database
-* Image cache
-* Distributed server
-* Multi-stage query
+## Scalability
+- In-memory database
+- Image cache
+- Distributed server
+- Multi-stage query
