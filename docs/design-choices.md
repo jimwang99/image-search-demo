@@ -62,12 +62,16 @@ There are existing end-to-end solutions for image search. Obviously using them a
 
 ### Vector database
 
-Milvus
+**[Milvus](https://github.com/milvus-io/milvus)**
 
 - Open-source (Linux foundation).
 - Good documentation and community support.
-- Good performance when scale-out
-- Offer in-memory database support.
+- Good performance when scale-out.
+
+[ChromaDB](https://github.com/chroma-core/chroma)
+
+* Open-source.
+* Super light-weight and beginner friendly.
 
 ### API service framework
 
