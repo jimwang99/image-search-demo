@@ -1,10 +1,9 @@
 import random
-
-import cv2
-from numpy import np
 from pathlib import Path
 from typing import Iterable
 
+import cv2
+import numpy as np
 from loguru import logger
 
 

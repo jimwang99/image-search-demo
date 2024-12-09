@@ -1,8 +1,10 @@
+import sys
 import unittest
 
 import cv2
 import numpy as np
 from pathlib import Path
+
 from config import Config
 from backend import BackendServer
 
@@ -10,7 +12,7 @@ from backend import BackendServer
 class TestBackend(unittest.TestCase):
     def setUp(self):
         self.config = Config(
-            root_path=Path(__file__).parent,
+            root_dpath=Path(__file__).parent.parent,
             use_local_database=True,
             local_database_relative_fpath=Path("data/database"),
             use_local_image=True,

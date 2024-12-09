@@ -4,11 +4,12 @@ import os
 
 from pathlib import Path
 from pydantic.dataclasses import dataclass
+from pydantic.types import DirectoryPath
 
 
 @dataclass
 class Config:
-    root_dpath: Path
+    root_dpath: DirectoryPath
     # database
     use_milvus: bool = True
     use_local_database: bool = True

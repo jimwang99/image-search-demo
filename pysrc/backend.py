@@ -1,11 +1,11 @@
 import pprint
 
+from config import Config
 import numpy as np
 
-from config import Config
 from image_server import LocalImageServer
 from embedding_server import OpenCLIPEmbeddingServer
-from database_server import MilvusDatabaseServer
+from database_server import MilvusLocalDatabaseServer
 
 from loguru import logger
 
@@ -32,8 +32,9 @@ class BackendServer:
 
         logger.info("Initialize database server")
         if self.config.use_milvus and self.config.use_local_database:
-            self.database_server = MilvusDatabaseServer(
-                uri=str(self.config.local_database_fpath)
+            self.database_server = MilvusLocalDatabaseServer(
+                uri=str(self.config.local_database_fpath),
+                embedding_dimension=self.embedding_server.get_embedding_dimension(),
             )
         else:
             raise ValueError("Only support local Milvus for now")
