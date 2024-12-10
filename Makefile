@@ -1,6 +1,6 @@
 export PYTHONPATH := $(shell pwd)/pysrc
 
-.PHONY: download-image
+.PHONY: download-images
 download-images: data/val2017.zip
 data/inputs/val2017.zip:
 	mkdir -p data/inputs \
