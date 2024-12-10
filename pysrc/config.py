@@ -43,3 +43,13 @@ class Config:
             self.test_image_dpath = self.root_dpath / self.test_image_relative_dpath
         else:
             self.test_image_dpath = None
+
+
+model_name = "ViT-L-14-336-quickgelu"
+model_author = "openai"
+config = Config(
+    root_dpath=Path(__file__).parent.parent,
+    local_database_relative_fpath=Path(f"data/{model_name}.{model_author}.db"),
+    local_image_relative_dpath=Path("data/images"),
+    open_clip_model_name=(model_name, model_author),
+)

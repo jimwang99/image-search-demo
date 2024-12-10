@@ -9,6 +9,8 @@ from loguru import logger
 
 class ImageLocalServer:
     """A local image server for storing images
+
+    >>> # doc test
     >>> import os
     >>> os.makedirs("/tmp/test_images", exist_ok=True)
     >>> svr = ImageLocalServer("/tmp/test_images")
@@ -30,7 +32,7 @@ class ImageLocalServer:
     """
 
     def __init__(self, root_dpath: str):
-        """Initialize image server
+        """Initialize image server on local file system
 
         Args:
             root_dpath (str): root directory path
@@ -44,7 +46,7 @@ class ImageLocalServer:
         logger.info(f"Found {len(self._all_fpaths)} images")
 
     def size(self) -> int:
-        """Get the number of images
+        """Get the number of images on the server
 
         Returns:
             int: number of images
@@ -64,7 +66,7 @@ class ImageLocalServer:
         return p in self._all_fpaths
 
     def get_uri(self, id: int) -> str:
-        """Get the URI of the image
+        """Get the URI of the image, which is the file path
 
         Args:
             id (int): image ID
@@ -75,7 +77,7 @@ class ImageLocalServer:
         return str(self.root_dpath / f"{id}.png")
 
     def get_id(self, uri: str) -> int:
-        """Get the ID of the image
+        """Get the ID of the image, given the file path
 
         Args:
             uri (str): file path of the image
@@ -86,11 +88,11 @@ class ImageLocalServer:
         return int(Path(uri).stem)
 
     def insert(self, image: np.ndarray, id: int) -> str:
-        """Insert an image
+        """Insert an image to the server
 
         Args:
             image (np.ndarray): numpy array of the image
-            id (int): image ID
+            id (int): image ID, from database server
 
         Returns:
             str: file path of the image
@@ -106,10 +108,10 @@ class ImageLocalServer:
         return str(uri)
 
     def delete(self, id: int) -> None:
-        """Delete an image
+        """Delete an image from the server by ID
 
         Args:
-            id (int): image ID
+            id (int): image unique ID
         """
         assert self.has(id), f"Image not found: {id=}"
         p = Path(self.get_uri(id))
@@ -118,22 +120,32 @@ class ImageLocalServer:
         logger.trace(f"Deleted image: {p}, count = {self.size()}")
 
     def get(self, id: int) -> np.ndarray:
-        """Get the image
+        """Get the image from the server by ID
 
         Args:
             id (int): image ID
 
         Returns:
-            np.ndarray: numpy array of the image
+            np.ndarray: numpy array of the image, 3D with shape (height, width, channel)
         """
         assert self.has(id), f"Image not found: {id=}"
         return cv2.imread(self.get_uri(id))
 
     def all_uri(self) -> Iterable[str]:
+        """Get all images' URIs, which are the file paths
+
+        Yields:
+            Iterator[str]: file path of the image in iterator form
+        """
         for uri in map(str, self._all_fpaths):
             yield uri
 
     def all_id(self) -> Iterable[int]:
+        """Get all images' IDs
+
+        Yields:
+            Iterator[int]: image ID in iterator form
+        """
         for p in self._all_fpaths:
             yield int(p.stem)
 

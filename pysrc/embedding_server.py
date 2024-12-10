@@ -10,8 +10,9 @@ from loguru import logger
 
 class OpenCLIPEmbeddingServer:
     """OpenCLIP embedding server
-    https://github.com/mlfoundations/open_clip
+    Offical document at https://github.com/mlfoundations/open_clip
 
+    >>> # doc test
     >>> svr = OpenCLIPEmbeddingServer()
     >>> svr.get_embedding_dimension()
     768
@@ -32,7 +33,7 @@ class OpenCLIPEmbeddingServer:
     def __init__(
         self, model_name: tuple[str, str] = ("ViT-L-14-336-quickgelu", "openai")
     ):
-        """Initialize OpenCLIP embedding server
+        """Initialize OpenCLIP embedding server, hosting a multimodal model
 
         Args:
             model_name (tuple[str, str], optional): prtrained model name and author. Defaults to ("ViT-L-14-336-quickgelu", "openai").
@@ -73,13 +74,13 @@ class OpenCLIPEmbeddingServer:
         return self.embedding_dimension
 
     def generate_embedding_for_image(self, image: np.ndarray) -> np.ndarray:
-        """Generate embedding for an image
+        """Generate embedding for an image use pretrained multimodal model
 
         Args:
-            image (np.ndarray): numpy array of the image
+            image (np.ndarray): numpy array of the image, 3D with shape (height, width, channel), must be uint8
 
         Returns:
-            np.ndarray: numpy array of the embedding
+            np.ndarray: numpy array of the embedding, single dimension
         """
         with torch.inference_mode():
             pp = self.preprocess(Image.fromarray(image)).unsqueeze(0).to(self.device)
@@ -87,13 +88,13 @@ class OpenCLIPEmbeddingServer:
         return e
 
     def generate_embedding_for_text(self, text: str) -> np.ndarray:
-        """Generate embedding for a text
+        """Generate embedding for a text string use pretrained multimodal model
 
         Args:
-            text (str): text string
+            text (str): text string, only support English for now
 
         Returns:
-            np.ndarray: numpy array of the embedding
+            np.ndarray: numpy array of the embedding, single dimension
         """
         with torch.inference_mode():
             t = self.tokenizer([text]).to(self.device)

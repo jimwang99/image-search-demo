@@ -2,22 +2,16 @@ from pathlib import Path
 
 import gradio as gr
 
-from config import Config
+from config import config
 from backend import BackendServer
 
 from loguru import logger
 
-model_name = "ViT-L-14-336-quickgelu"
-model_author = "openai"
-config = Config(
-    root_dpath=Path(__file__).parent.parent,
-    local_database_relative_fpath=Path(f"data/{model_name}.{model_author}.db"),
-    local_image_relative_dpath=Path("data/images"),
-    open_clip_model_name=(model_name, model_author),
-)
+# Create a backend server
 server = BackendServer(config)
 
 
+# search function for the "Search" button
 def search(text_input, image_input):
     logger.debug(f"{text_input=} {image_input=}")
     if image_input is not None:

@@ -4,15 +4,23 @@ from pathlib import Path
 import cv2
 import numpy as np
 import torch
-from config import Config
+from config import Config, config
 from database_server import MilvusLocalServer
 from embedding_server import OpenCLIPEmbeddingServer
 from image_server import ImageLocalServer
 from loguru import logger
+from tqdm import tqdm
 
 
 class BackendServer:
+    """Backend server for image search"""
+
     def __init__(self, config: Config):
+        """Initialize the backend server
+
+        Args:
+            config (Config): configuration object, see `config.py`
+        """
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(config)
         self.config = config
@@ -48,9 +56,22 @@ class BackendServer:
         ), f"Database size {self.database_server.size()} != Image size {self.image_server.size()}"
 
     def get_database_size(self) -> int:
+        """Get the number of images in the database
+
+        Returns:
+            int: number of images
+        """
         return self.database_server.size()
 
     def load_image(self, fpath: Path) -> np.ndarray:
+        """Load an image from file
+
+        Args:
+            fpath (Path): file path of the image
+
+        Returns:
+            np.ndarray: numpy array of the image, 3D with shape (height, width, channel)
+        """
         assert fpath.is_file(), f"Invalid image file path: {fpath}"
         image = cv2.imread(str(fpath))
         assert image is not None, f"Invalid image: {image}"
@@ -63,7 +84,7 @@ class BackendServer:
             image (np.ndarray | Path): numpy array of the image or image path
 
         Returns:
-            int: image ID
+            int: image unique ID
         """
         if isinstance(image, Path):
             image = self.load_image(image)
@@ -80,6 +101,11 @@ class BackendServer:
         return id
 
     def delete_image(self, id: int) -> None:
+        """Delete an image by ID
+
+        Args:
+            id (int): image unique ID
+        """
         self.database_server.delete(id)
         self.image_server.delete(id)
 
@@ -87,10 +113,10 @@ class BackendServer:
         """Get the image content in numpy array
 
         Args:
-            id (int): image ID
+            id (int): image unique ID
 
         Returns:
-            np.ndarray: numpy array of the image
+            np.ndarray: numpy array of the image, 3D with shape (height, width, channel)
         """
         return self.image_server.get(id)
 
@@ -98,7 +124,7 @@ class BackendServer:
         """Get the image URI
 
         Args:
-            id (int): image ID
+            id (int): image unique ID
 
         Returns:
             str: image URI
@@ -106,6 +132,15 @@ class BackendServer:
         return self.image_server.get_uri(id)
 
     def search_with_image(self, image: np.ndarray | Path, top_k: int) -> list[int]:
+        """Search similar images with an image
+
+        Args:
+            image (np.ndarray | Path): numpy array of the image or image path
+            top_k (int): maximum number of results to return
+
+        Returns:
+            list[int]: list of image IDs
+        """
         if isinstance(image, Path):
             image = self.load_image(image)
         emb = self.embedding_server.generate_embedding_for_image(image)
@@ -113,6 +148,15 @@ class BackendServer:
         return [r[0] for r in results]
 
     def search_with_text(self, text: str, top_k: int) -> list[int]:
+        """Search similar images with a text
+
+        Args:
+            text (str): text string
+            top_k (int): maximum number of results to return
+
+        Returns:
+            list[int]: list of image IDs
+        """
         emb = self.embedding_server.generate_embedding_for_text(text)
         results = self.database_server.search(emb, top_k * 2, distance_threshold=0.0)
         ids = [r[0] for r in results]
@@ -127,21 +171,10 @@ class BackendServer:
 
 
 if __name__ == "__main__":
-    model_name = "ViT-L-14-336-quickgelu"
-    model_author = "openai"
-    config = Config(
-        root_dpath=Path(__file__).parent.parent,
-        use_local_database=True,
-        local_database_relative_fpath=Path(f"data/{model_name}.{model_author}.db"),
-        use_local_image=True,
-        local_image_relative_dpath=Path("data/images"),
-        use_open_clip=True,
-        open_clip_model_name=(model_name, model_author),
-        test_image_relative_dpath=Path("data/inputs/val2017"),
-    )
     server = BackendServer(config)
 
-#     from tqdm import tqdm
-
-#     for image_fpath in tqdm(config.test_image_dpath.glob("*.jpg")):
-#         id = server.insert_image(image_fpath)
+    if server.get_database_size() == 0:
+        logger.info("Database is empty, inserting images into database")
+        logger.warning("This may take a while to generate embeddings for all images")
+        for image_fpath in tqdm(list(config.test_image_dpath.glob("*.jpg"))):
+            id = server.insert_image(image_fpath)
