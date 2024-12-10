@@ -60,12 +60,12 @@ Use browser to open [http://127.0.0.1:7860/](http://127.0.0.1:7860/)
 - [x] High-level diagrams
 - [x] AI stack choices
 - [x] Software stack choices
-- [ ] Detailed diagram
-- [ ] 1st review
-- [ ] Skeleton code with unit-tests
-- [ ] Complete documents
-- [ ] More integration tests
-- [ ] Performance optimization
-- [ ] MVP demo
+- [x] Detailed diagram
+- [x] 1st review
+- [x] Skeleton code with unit-tests
+- [x] Complete documents
+- [x] More integration tests
+- [x] Performance optimization
+- [x] MVP demo
 - [ ] 2nd review
 - [ ] Improvements
