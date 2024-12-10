@@ -21,6 +21,7 @@ class Config:
     # tests
     test_with_empty_database: bool = False
     test_image_relative_dpath: Path | None = None
+    test_image_count: int = 0
 
     def __post_init__(self):
         if self.use_local_database:
@@ -53,4 +54,5 @@ config = Config(
     local_image_relative_dpath=Path("data/images"),
     open_clip_model_name=(model_name, model_author),
     test_image_relative_dpath=Path("data/inputs/val2017"),
+    test_image_count=1000,
 )

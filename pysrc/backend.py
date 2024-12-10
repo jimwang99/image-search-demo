@@ -1,4 +1,5 @@
 import pprint
+import random
 from pathlib import Path
 
 import cv2
@@ -176,5 +177,10 @@ if __name__ == "__main__":
     if server.get_database_size() == 0:
         logger.info("Database is empty, inserting images into database")
         logger.warning("This may take a while to generate embeddings for all images")
-        for image_fpath in tqdm(list(config.test_image_dpath.glob("*.jpg"))[:100]):
+
+        all_test_image_fpaths = list(config.test_image_dpath.glob("*.jpg"))
+        test_image_fpaths = list(
+            random.choices(all_test_image_fpaths, k=config.test_image_count)
+        )
+        for image_fpath in tqdm(test_image_fpaths):
             id = server.insert_image(image_fpath)

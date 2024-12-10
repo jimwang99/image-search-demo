@@ -33,7 +33,7 @@ This step downloads 5K coco-2017 validation dataset from https://cocodataset.org
 ```
 make init
 ```
-This step generates embeddings for all the images from above dataset, and inserts them into the database. It will take some time (about 30mins on my MacBook Air with Apple M2 CPU/GPU).
+This step generates embeddings for 1000 images from above dataset, and inserts them into the database. It will take some time (about 6mins on my MacBook Air with Apple M2 CPU/GPU).
 
 ### Run
 
