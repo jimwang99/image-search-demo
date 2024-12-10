@@ -4,10 +4,6 @@ This is a demo for image search use LLM to improve its accuracy.
 
 ## How to use
 
-> [!IMPORTANT]
->
-> Still working in progress
-
 ### Setup Python
 
 1. Install [miniconda](https://docs.anaconda.com/miniconda/install/#quick-command-line-install)
