@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
+
 from pydantic.dataclasses import dataclass
 from pydantic.types import DirectoryPath
 
@@ -54,5 +56,7 @@ config = Config(
     local_image_relative_dpath=Path("data/images"),
     open_clip_model_name=(model_name, model_author),
     test_image_relative_dpath=Path("data/inputs/val2017"),
-    test_image_count=1000,
+    test_image_count=5000
+    if os.environ.get("TEST_IMAGE_COUNT", "0") == "0"
+    else int(os.environ["TEST_IMAGE_COUNT"]),
 )
