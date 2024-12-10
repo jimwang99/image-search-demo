@@ -94,11 +94,22 @@ class BackendServer:
         """
         return self.image_server.get(id)
 
+    def get_image_uri(self, id: int) -> str:
+        """Get the image URI
+
+        Args:
+            id (int): image ID
+
+        Returns:
+            str: image URI
+        """
+        return self.image_server.get_uri(id)
+
     def search_with_image(self, image: np.ndarray | Path, top_k: int) -> list[int]:
         if isinstance(image, Path):
             image = self.load_image(image)
         emb = self.embedding_server.generate_embedding_for_image(image)
-        results = self.database_server.search(emb, top_k)
+        results = self.database_server.search(emb, top_k, distance_threshold=0.5)
         return [r[0] for r in results]
 
     def search_with_text(self, text: str, top_k: int) -> list[int]:
@@ -130,7 +141,7 @@ if __name__ == "__main__":
     )
     server = BackendServer(config)
 
-    from tqdm import tqdm
+#     from tqdm import tqdm
 
-    for image_fpath in tqdm(config.test_image_dpath.glob("*.jpg")):
-        id = server.insert_image(image_fpath)
+#     for image_fpath in tqdm(config.test_image_dpath.glob("*.jpg")):
+#         id = server.insert_image(image_fpath)

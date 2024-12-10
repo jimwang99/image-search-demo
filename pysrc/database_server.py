@@ -111,7 +111,7 @@ class MilvusLocalServer:
         return result["ids"][0]
 
     def search(
-        self, embedding: np.ndarray, top_k: int, distance_threshold: float = 0.9
+        self, embedding: np.ndarray, top_k: int, distance_threshold: float = 0.5
     ) -> list[int, float]:
         """Search for embeddings in the database
 

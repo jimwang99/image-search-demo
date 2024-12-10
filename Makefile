@@ -16,3 +16,7 @@ lint:
 test:
 	pytest --ignore=data --doctest-modules -s
 	rm -rf data/test
+
+.PHONY: run
+run:
+	python pysrc/frontend.py
