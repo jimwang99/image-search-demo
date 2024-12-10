@@ -52,4 +52,5 @@ config = Config(
     local_database_relative_fpath=Path(f"data/{model_name}.{model_author}.db"),
     local_image_relative_dpath=Path("data/images"),
     open_clip_model_name=(model_name, model_author),
+    test_image_relative_dpath=Path("data/inputs/val2017"),
 )

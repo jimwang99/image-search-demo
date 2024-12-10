@@ -4,21 +4,21 @@ This is a demo for image search use LLM to improve its accuracy.
 
 ## How to use
 
-### Setup Python
-
-1. Install [miniconda](https://docs.anaconda.com/miniconda/install/#quick-command-line-install)
-2. Create virtual env for this demo and install required packages
-```
-conda create -n image-search-demo python=3.12
-conda activate image-search-demo
-pip install -r requirements.txt
-```
-
 ### Prepare the repo
 
 ```
 git clone https://github.com/jimwang99/image-search-demo.git
 cd image-search-demo
+```
+
+### Setup Python
+
+1. Install [miniconda](https://docs.anaconda.com/miniconda/install/#quick-command-line-install)
+2. Create virtual env for this demo and install required packages
+```
+conda create -y -n image-search-demo python=3.12
+conda activate image-search-demo
+pip install -r requirements.txt
 ```
 
 ### Prepare dataset
