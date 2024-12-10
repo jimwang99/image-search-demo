@@ -14,4 +14,5 @@ lint:
 	
 .PHONY: test
 test:
-	python -m pytest tests
+	pytest --ignore=data --doctest-modules -s
+	rm -rf data/test

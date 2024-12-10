@@ -27,19 +27,9 @@ class Config:
     def __post_init__(self):
         if self.use_local_database:
             assert self.local_database_relative_fpath is not None
-            if not self.test_with_empty_database:
-                self.local_database_fpath = (
-                    self.root_dpath / self.local_database_relative_fpath
-                )
-            else:
-                # Create a temporary file name for the database
-                temp_file = tempfile.NamedTemporaryFile(delete=False)
-                temp_file_name = temp_file.name
-                temp_file.close()  # Close and delete the temporary file
-                os.unlink(
-                    temp_file_name
-                )  # Remove the file, leaving only the unique name
-                self.local_database_fpath = Path(temp_file_name)
+            self.local_database_fpath = (
+                self.root_dpath / self.local_database_relative_fpath
+            )
         else:
             self.local_database_fpath = None
             raise ValueError("Only support local database for now")

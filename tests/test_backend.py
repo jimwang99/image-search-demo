@@ -1,79 +1,70 @@
 import sys
-import unittest
-
-import cv2
-import numpy as np
 from pathlib import Path
 
-from config import Config
+sys.path.append(str(Path(__file__).parent.parent / "pysrc"))
+
 from backend import BackendServer
+from config import Config
 
 
-class TestBackend(unittest.TestCase):
-    def setUp(self):
-        self.config = Config(
-            root_dpath=Path(__file__).parent.parent,
-            use_local_database=True,
-            local_database_relative_fpath=Path("data/database"),
-            use_local_image=True,
-            local_image_relative_dpath=Path("data/images/val2017"),
-            test_with_empty_database=True,
-            test_image_relative_dpath=Path("data/images/val2017"),
-        )
-        self.backend_server = BackendServer(self.config)
-        self.image_server = self.backend_server.image_server
+def test_backend():
+    config = Config(
+        root_dpath=Path(__file__).parent.parent,
+        local_database_relative_fpath=Path("data/test/test.db"),
+        local_image_relative_dpath=Path("data/test/images"),
+        use_open_clip=True,
+        open_clip_model_name=("ViT-L-14-336-quickgelu", "openai"),
+        test_with_empty_database=True,
+        test_image_relative_dpath=Path("data/inputs/val2017"),
+    )
+    backend_server = BackendServer(config)
+    test_image_fpaths = list(config.test_image_dpath.glob("*.jpg"))
 
-    def test_insert_and_delete_image(self):
-        uris = []
-        for _ in range(10):
-            uri, ndarray = self.image_server.get_random_image()
-            self.backend_server.insert_image(uri, ndarray)
-            uris.append(uri)
-            cnt = self.backend_server.get_database_size()
-            self.assertEqual(cnt, len(uris))
+    assert backend_server.get_database_size() == 0
 
-        while len(uris) > 0:
-            uri = uris.pop()
-            self.backend_server.delete_image(uri)
+    # test insert image
+    ids = []
+    for fpath in test_image_fpaths[:10]:
+        id = backend_server.insert_image(fpath)
+        ids.append(id)
+        cnt = backend_server.get_database_size()
+        assert cnt == len(ids)
 
-            cnt = self.backend_server.get_database_size()
-            self.assertEqual(cnt, len(uris))
+    # test search with existing image
+    for id in ids:
+        img = backend_server.get_image(id)
+        results = backend_server.search_with_image(img, top_k=1)
+        assert len(results) == 1
+        assert results[0] == id
 
-    def _insert_images(self, num_images: int) -> list[tuple[str, np.ndarray]]:
-        images = []
-        for _ in range(num_images):
-            uri, ndarray = self.image_server.get_random_image()
-            self.backend_server.insert_image(uri, ndarray)
-            images.append((uri, ndarray))
-        return images
+    # test search with text
+    ## add target image into database
+    image_fpath = config.test_image_dpath / "000000001000.jpg"
+    assert image_fpath.is_file(), f"Invalid image file path: {image_fpath}"
+    img = backend_server.load_image(image_fpath)
+    id = backend_server.insert_image(img)
+    ids.append(id)
 
-    def test_search_with_existing_image(self):
-        self.assertEqual(self.backend_server.get_database_size(), 0)
+    results = backend_server.search_with_text(
+        """a group of kids posing for a picture on a tennis court.
+        a group of young children standing next to each other.
+        a large family poses for picture on tennis court
+        a group of people that are standing near a tennis net.
+        the people are posing for a group photo.""",
+        top_k=5,
+    )
+    assert id in results
 
-        images = self._insert_images(10)
-        for uri, ndarray in images:
-            results = self.backend_server.search_with_image(ndarray, top_k=2)
-            self.assertEqual(len(results), 2)
-            self.assertEqual(results[0], uri)
+    # test delete image
+    while len(ids) > 0:
+        id = ids.pop()
+        backend_server.delete_image(id)
 
-    def test_search_with_text(self):
-        self.assertEqual(self.backend_server.get_database_size(), 0)
+        cnt = backend_server.get_database_size()
+        assert cnt == len(ids)
 
-        images = self._insert_images(10)
 
-        # add target image into database
-        image_fpath = self.config.test_image_dpath / "000000001000.jpg"
-        if str(image_fpath) not in [image[0] for image in images]:
-            self.backend_server.insert_image(cv2.imread(str(image_fpath)))
-        self.assertEqual(self.backend_server.get_database_size(), 11)
+if __name__ == "__main__":
+    import pytest
 
-        results = self.backend_server.search_with_text(
-            """a group of kids posing for a picture on a tennis court.
-a group of young children standing next to each other.
-a large family poses for picture on tennis court
-a group of people that are standing near a tennis net.
-the people are posing for a group photo.""",
-            top_k=5,
-        )
-        self.assertEqual(len(results), 5)
-        self.assertIn(str(image_fpath), [result[0] for result in results])
+    sys.exit(pytest.main(["-s", "-vv", __file__]))
