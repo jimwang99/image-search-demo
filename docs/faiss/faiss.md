@@ -176,7 +176,7 @@ Use lookup table to replace expensive matrix multiplication
 
 ## Deep Dive: GPU Acceleration
 
-### WarpSelec
+### WarpSelect
 
 FAISS's implementation using CUDA
 
@@ -194,6 +194,15 @@ FAISS's implementation using CUDA
 
 **Sharding**: distribute target data across multiple GPUs and join the partial results in a single GPU
 
+---
+
+## Deep Dive: Summary
+
+1. CUDA implementation of k-selection algorithm
+    1. Parallelization
+    2. In register compute
+    3. Optimized memory access
+2. Quantizations are used to trade-off speed against accuracy
 
 ---
 
