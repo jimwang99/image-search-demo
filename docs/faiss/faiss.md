@@ -59,6 +59,7 @@ style: |
 ## Introduction: Challenges of Similarity Search
 1.   Number of entires is super large: multiple billions
 2.   Latency is critical for user experience
+3.   How close / relevant are the returned results?
 
 Therefore, 3 metrics of interest:
 
